@@ -117,20 +117,20 @@ export const Module = React.memo(() => {
 })
 ```
 
-# Start new project with flags
+## Start new project with flags
 
 | Flags             | Description                             |
 | ----------------- | --------------------------------------- |
 | --npm             | use npm as package manager              |
 | --js --javascript | create new project that uses javascript |
 
-#Commands
+## Commands
 | Command | Description| Param Required |
 |--- |--- |--- |
 | new <project_name> <flags> | Generate a React Project | Yes |
 | g <module\|component> < name > | Create module or component | Yes |
 
-#Todos
+## Todos
 
 - ~~npm support~~ -> v2.2.5
 - react-router
@@ -140,6 +140,10 @@ export const Module = React.memo(() => {
 - ~~Code Splitting~~ -> v1.3.0
 - ~~non-typescript~~ -> v2.2.5
 - and more ...
+
+## Known issues
+
+- path alias not working for js project
 
 #Licenses
 MIT licensed. Copyright (c) Jamyth Luk 2020.
