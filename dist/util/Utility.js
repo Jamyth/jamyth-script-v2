@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Utility = void 0;
 const fs_1 = __importDefault(require("fs"));
+const print_1 = require("./print");
+const print = print_1.Print.createConsoleLogger("Utility");
 class Utility {
     static replaceTemplate(filePath, replacement) {
         try {
@@ -38,6 +40,13 @@ class Utility {
         }
         else {
             return camelNameWithoutPostfix + postfix;
+        }
+    }
+    static generate(directory) {
+        print.process(`checking existence of ${directory}...`);
+        if (!fs_1.default.existsSync(directory) || !fs_1.default.statSync(directory).isDirectory()) {
+            print.process(`${directory} is not exist, generating...`);
+            fs_1.default.mkdirSync(directory);
         }
     }
 }

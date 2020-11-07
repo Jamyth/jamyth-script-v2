@@ -5,7 +5,9 @@ A CLI tool for one-key setup [TypeScript](https://www.typescriptlang.org/), [Rea
 Feature Includes:
 
 - Create a complete customizable [React](https://reactjs.org/tutorial/tutorial.html) Project with just a key.
-- Support TypeScript, Scss.
+- Easy to switch between Npm and Yarn
+- Support Javascript and Typescript.
+- Support Scss
 - Save time configuring webpack settings.
 - Easy to change `webpack.config.js` when needed.
 - Currently freezed to webpack 4
@@ -61,6 +63,8 @@ File Structure will look like this
 In src folder, there will be two folder called component and module.
 To keep the structure organized. we do not suggest directly added folder and file.
 
+> P.S. jamyth-script will automatically detect the language of the project (js | ts) and generate a suitable module / component, so don't worry
+
 Instead, we suggest you to do the following
 
 ```
@@ -113,10 +117,17 @@ export const Module = React.memo(() => {
 })
 ```
 
+# Start new project with flags
+
+| Flags             | Description                             |
+| ----------------- | --------------------------------------- |
+| --npm             | use npm as package manager              |
+| --js --javascript | create new project that uses javascript |
+
 #Commands
 | Command | Description| Param Required |
 |--- |--- |--- |
-| new <project_name> | Generate a React Project | Yes |
+| new <project_name> <flags> | Generate a React Project | Yes |
 | g <module\|component> < name > | Create module or component | Yes |
 
 #Todos

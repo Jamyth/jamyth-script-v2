@@ -17,6 +17,7 @@ export class ModuleGenerator {
   private src!: string;
   private moduleDirectory!: string;
   private targetDirectory!: string;
+  private isJs: boolean = false;
   private readonly templateDirectory: string;
   private readonly moduleName: string;
   private readonly moduleType: ModuleType;
@@ -75,6 +76,9 @@ export class ModuleGenerator {
     while (loop < 5) {
       if (fs.existsSync(srcPath)) {
         print.process("src folder resolved");
+        if (!fs.existsSync(srcPath + "/tsconfig.json")) {
+          this.isJs = true;
+        }
         return (this.src = srcPath);
       }
       srcPath = path.join("..", srcPath);
@@ -104,22 +108,14 @@ export class ModuleGenerator {
   }
 
   private generateFolder() {
-    const generate = (directory: string) => {
-      print.process(`checking existence of ${directory}...`);
-      if (!fs.existsSync(directory) || !fs.statSync(directory).isDirectory()) {
-        print.process(`${directory} is not exist, generating...`);
-        fs.mkdirSync(directory);
-      }
-    };
-
     const directory = this.moduleName.split("/").reduce((prev, curr) => {
       const paths = path.join(prev, curr);
-      generate(path.join(this.moduleDirectory, paths));
+      Utility.generate(path.join(this.moduleDirectory, paths));
       return paths;
     }, "");
 
     if (this.asset) {
-      generate(path.join(this.moduleDirectory, directory, "asset"));
+      Utility.generate(path.join(this.moduleDirectory, directory, "asset"));
     }
 
     this.targetDirectory = path.join(this.moduleDirectory, directory);
@@ -130,12 +126,18 @@ export class ModuleGenerator {
     fs.copySync(
       path.join(
         this.templateDirectory,
-        this.moduleType === ModuleType.component ? "component" : "module"
+        this.isJs
+          ? this.moduleType === ModuleType.component
+            ? "component-js"
+            : "module-js"
+          : this.moduleType === ModuleType.component
+          ? "component"
+          : "module"
       ),
       this.targetDirectory
     );
 
-    if (this.state) {
+    if (this.state && !this.isJs) {
       fs.copySync(
         path.join(this.templateDirectory, "state"),
         this.targetDirectory
@@ -145,9 +147,11 @@ export class ModuleGenerator {
 
   private updateTemplateContent() {
     if (this.moduleType === ModuleType.module) {
-      const indexTSPath = this.targetDirectory + "/index.ts";
-      const mainTSXPath = this.targetDirectory + "/component/Main.tsx";
-      const indexSCSSPath = this.targetDirectory + "/component/index.scss";
+      const indexTSPath =
+        this.targetDirectory + `/index.${this.isJs ? "js" : "ts"}`;
+      const mainTSXPath =
+        this.targetDirectory + `/component/Main.${this.isJs ? "js" : "ts"}x`;
+      const indexSCSSPath = this.targetDirectory + `/component/index.scss`;
 
       print.task([`Updating index.ts`, indexTSPath]);
       Utility.replaceTemplate(indexTSPath, [
@@ -163,7 +167,8 @@ export class ModuleGenerator {
         Utility.getModuleNameInFormat(this.moduleName, "camel"),
       ]);
     } else if (this.moduleType === ModuleType.component) {
-      const indexTSXPath = this.targetDirectory + "/index.tsx";
+      const indexTSXPath =
+        this.targetDirectory + `/index.${this.isJs ? "js" : "ts"}x`;
       const indexSCSSPath = this.targetDirectory + "/index.scss";
       print.task([`Updating index.tsx`, indexTSXPath]);
       Utility.replaceTemplate(indexTSXPath, [

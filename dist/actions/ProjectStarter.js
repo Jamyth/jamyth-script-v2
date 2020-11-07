@@ -10,17 +10,20 @@ const chalk_1 = __importDefault(require("chalk"));
 const Utility_1 = require("../util/Utility");
 const child_process_promise_1 = require("child-process-promise");
 const ora_1 = __importDefault(require("ora"));
+const path_1 = __importDefault(require("path"));
 const print = print_1.Print.createConsoleLogger("Generate New Project");
 class ProjectStarter {
-    constructor({ projectName, templateDirectory }) {
+    constructor({ projectName, templateDirectory, useNpm, }) {
         this.projectName = projectName;
         this.templateDirectory = templateDirectory;
         this.projectPath = `./${projectName}`;
+        this.useNpm = useNpm;
     }
     run() {
         try {
             this.preProcess();
             this.copyTemplate();
+            this.mkdir();
             this.updateTemplateContent();
             this.installDependencies();
         }
@@ -57,6 +60,10 @@ class ProjectStarter {
         print.task(["Generating project starter pack to target", this.projectPath]);
         fs_extra_1.default.copySync(this.templateDirectory, this.projectPath);
     }
+    mkdir() {
+        Utility_1.Utility.generate(path_1.default.join(this.projectPath, "src", "component"));
+        Utility_1.Utility.generate(path_1.default.join(this.projectPath, "src", "asset"));
+    }
     updateTemplateContent() {
         const packagePath = this.projectPath + "/package.json";
         print.task(["Updating package.json", packagePath]);
@@ -65,8 +72,8 @@ class ProjectStarter {
     async installDependencies() {
         try {
             console.info("");
-            const spinner = ora_1.default(`Installing dependencies using ${chalk_1.default.blueBright("Yarn")}`).start();
-            const { stdout } = await child_process_promise_1.exec(`cd ${this.projectPath} && yarn`);
+            const spinner = ora_1.default(`Installing dependencies using ${chalk_1.default.blueBright(this.useNpm ? "Npm" : "Yarn")}`).start();
+            const { stdout } = await child_process_promise_1.exec(`cd ${this.projectPath} && ${this.useNpm ? "npm i" : "yarn"}`);
             spinner.stop();
             stdout.split("\n").forEach((_) => print.task(_));
         }

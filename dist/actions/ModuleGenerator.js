@@ -13,6 +13,7 @@ const print = print_1.Print.createConsoleLogger("Module Generator");
 class ModuleGenerator {
     // private readonly prefix: string = "./test/1.2.3/";
     constructor({ moduleName, moduleType, state, asset }) {
+        this.isJs = false;
         this.templateDirectory = path_1.default.join(__dirname, "..", "..", "template");
         this.moduleName = moduleName;
         this.moduleType = moduleType;
@@ -57,6 +58,9 @@ class ModuleGenerator {
         while (loop < 5) {
             if (fs_extra_1.default.existsSync(srcPath)) {
                 print.process("src folder resolved");
+                if (!fs_extra_1.default.existsSync(srcPath + "/tsconfig.json")) {
+                    this.isJs = true;
+                }
                 return (this.src = srcPath);
             }
             srcPath = path_1.default.join("..", srcPath);
@@ -74,35 +78,34 @@ class ModuleGenerator {
         this.moduleDirectory = dir;
     }
     generateFolder() {
-        const generate = (directory) => {
-            print.process(`checking existence of ${directory}...`);
-            if (!fs_extra_1.default.existsSync(directory) || !fs_extra_1.default.statSync(directory).isDirectory()) {
-                print.process(`${directory} is not exist, generating...`);
-                fs_extra_1.default.mkdirSync(directory);
-            }
-        };
         const directory = this.moduleName.split("/").reduce((prev, curr) => {
             const paths = path_1.default.join(prev, curr);
-            generate(path_1.default.join(this.moduleDirectory, paths));
+            Utility_1.Utility.generate(path_1.default.join(this.moduleDirectory, paths));
             return paths;
         }, "");
         if (this.asset) {
-            generate(path_1.default.join(this.moduleDirectory, directory, "asset"));
+            Utility_1.Utility.generate(path_1.default.join(this.moduleDirectory, directory, "asset"));
         }
         this.targetDirectory = path_1.default.join(this.moduleDirectory, directory);
     }
     copyTemplate() {
         print.task(`Generating ${this.moduleType} for ${this.moduleName}`);
-        fs_extra_1.default.copySync(path_1.default.join(this.templateDirectory, this.moduleType === type_1.ModuleType.component ? "component" : "module"), this.targetDirectory);
-        if (this.state) {
+        fs_extra_1.default.copySync(path_1.default.join(this.templateDirectory, this.isJs
+            ? this.moduleType === type_1.ModuleType.component
+                ? "component-js"
+                : "module-js"
+            : this.moduleType === type_1.ModuleType.component
+                ? "component"
+                : "module"), this.targetDirectory);
+        if (this.state && !this.isJs) {
             fs_extra_1.default.copySync(path_1.default.join(this.templateDirectory, "state"), this.targetDirectory);
         }
     }
     updateTemplateContent() {
         if (this.moduleType === type_1.ModuleType.module) {
-            const indexTSPath = this.targetDirectory + "/index.ts";
-            const mainTSXPath = this.targetDirectory + "/component/Main.tsx";
-            const indexSCSSPath = this.targetDirectory + "/component/index.scss";
+            const indexTSPath = this.targetDirectory + `/index.${this.isJs ? "js" : "ts"}`;
+            const mainTSXPath = this.targetDirectory + `/component/Main.${this.isJs ? "js" : "ts"}x`;
+            const indexSCSSPath = this.targetDirectory + `/component/index.scss`;
             print.task([`Updating index.ts`, indexTSPath]);
             Utility_1.Utility.replaceTemplate(indexTSPath, [
                 Utility_1.Utility.getModuleNameInFormat(this.moduleName, "pascal"),
@@ -118,7 +121,7 @@ class ModuleGenerator {
             ]);
         }
         else if (this.moduleType === type_1.ModuleType.component) {
-            const indexTSXPath = this.targetDirectory + "/index.tsx";
+            const indexTSXPath = this.targetDirectory + `/index.${this.isJs ? "js" : "ts"}x`;
             const indexSCSSPath = this.targetDirectory + "/index.scss";
             print.task([`Updating index.tsx`, indexTSXPath]);
             Utility_1.Utility.replaceTemplate(indexTSXPath, [

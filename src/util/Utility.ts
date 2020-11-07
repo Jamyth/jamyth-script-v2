@@ -1,5 +1,8 @@
 import fs from "fs";
 
+import { Print } from "./print";
+
+const print = Print.createConsoleLogger("Utility");
 export class Utility {
   static replaceTemplate(filePath: string, replacement: string[]) {
     try {
@@ -43,6 +46,14 @@ export class Utility {
       );
     } else {
       return camelNameWithoutPostfix + postfix;
+    }
+  }
+
+  static generate(directory: string) {
+    print.process(`checking existence of ${directory}...`);
+    if (!fs.existsSync(directory) || !fs.statSync(directory).isDirectory()) {
+      print.process(`${directory} is not exist, generating...`);
+      fs.mkdirSync(directory);
     }
   }
 }

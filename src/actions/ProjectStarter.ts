@@ -4,6 +4,7 @@ import chalk from "chalk";
 import { Utility } from "../util/Utility";
 import { exec } from "child-process-promise";
 import ora from "ora";
+import path from "path";
 
 interface ProjectStarterOptions {
   projectName: string;
@@ -34,6 +35,7 @@ export class ProjectStarter {
     try {
       this.preProcess();
       this.copyTemplate();
+      this.mkdir();
       this.updateTemplateContent();
       this.installDependencies();
     } catch (error) {
@@ -79,6 +81,11 @@ export class ProjectStarter {
   private copyTemplate() {
     print.task(["Generating project starter pack to target", this.projectPath]);
     fs.copySync(this.templateDirectory, this.projectPath);
+  }
+
+  private mkdir() {
+    Utility.generate(path.join(this.projectPath, "src", "component"));
+    Utility.generate(path.join(this.projectPath, "src", "asset"));
   }
 
   private updateTemplateContent() {

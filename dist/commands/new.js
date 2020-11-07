@@ -10,13 +10,20 @@ const type_1 = require("../type");
 const path_1 = __importDefault(require("path"));
 class NewClass extends AbstractCommand_1.AbstractCommand {
     static load(yargs) {
-        yargs.command([type_1.Command.new, type_1.Alias.new], false, () => { }, this.run).argv;
+        yargs
+            .command([type_1.Command.new, type_1.Alias.new], false, () => { }, this.run)
+            .option(type_1.Option.npm, { type: "boolean" })
+            .option(type_1.Option.javascript, {
+            alias: type_1.OptionAlias.javascript,
+            type: "boolean",
+        }).argv;
     }
     static run(args) {
-        const { projectName } = args;
+        const { projectName, npm, js } = args;
         new ProjectStarter_1.ProjectStarter({
             projectName,
-            templateDirectory: path_1.default.resolve(__dirname, "..", "..", "template", "project"),
+            templateDirectory: path_1.default.resolve(__dirname, "..", "..", "template", js ? "project-js" : "project"),
+            useNpm: npm,
         }).run();
     }
 }

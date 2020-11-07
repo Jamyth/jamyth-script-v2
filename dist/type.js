@@ -13,11 +13,14 @@ var Alias;
 })(Alias = exports.Alias || (exports.Alias = {}));
 var Option;
 (function (Option) {
+    Option["npm"] = "npm";
+    Option["javascript"] = "javascript";
     Option["asset"] = "asset";
     Option["state"] = "state";
 })(Option = exports.Option || (exports.Option = {}));
 var OptionAlias;
 (function (OptionAlias) {
+    OptionAlias["javascript"] = "js";
     OptionAlias["asset"] = "a";
     OptionAlias["state"] = "s";
 })(OptionAlias = exports.OptionAlias || (exports.OptionAlias = {}));
