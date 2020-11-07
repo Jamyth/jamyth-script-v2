@@ -132,13 +132,13 @@ export const Module = React.memo(() => {
 
 #Todos
 
-- npm support
+- ~~npm support~~ -> v2.2.5
 - react-router
 - redux
 - ~~path alias~~ -> v1.2.23
 - ~~React.memo~~ -> v1.2.23
 - ~~Code Splitting~~ -> v1.3.0
-- non-typescript
+- ~~non-typescript~~ -> v2.2.5
 - and more ...
 
 #Licenses
