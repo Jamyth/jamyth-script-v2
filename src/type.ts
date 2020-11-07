@@ -9,11 +9,14 @@ export enum Alias {
 }
 
 export enum Option {
+  npm = "npm",
+  javascript = "javascript",
   asset = "asset",
   state = "state",
 }
 
 export enum OptionAlias {
+  javascript = "js",
   asset = "a",
   state = "s",
 }

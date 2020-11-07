@@ -8,6 +8,7 @@ import ora from "ora";
 interface ProjectStarterOptions {
   projectName: string;
   templateDirectory: string;
+  useNpm: boolean | undefined;
 }
 
 const print = Print.createConsoleLogger("Generate New Project");
@@ -16,11 +17,17 @@ export class ProjectStarter {
   private readonly projectName: string;
   private readonly templateDirectory: string;
   private readonly projectPath: string;
+  private readonly useNpm: boolean | undefined;
 
-  constructor({ projectName, templateDirectory }: ProjectStarterOptions) {
+  constructor({
+    projectName,
+    templateDirectory,
+    useNpm,
+  }: ProjectStarterOptions) {
     this.projectName = projectName;
     this.templateDirectory = templateDirectory;
     this.projectPath = `./${projectName}`;
+    this.useNpm = useNpm;
   }
 
   public run() {
@@ -84,9 +91,13 @@ export class ProjectStarter {
     try {
       console.info("");
       const spinner = ora(
-        `Installing dependencies using ${chalk.blueBright("Yarn")}`
+        `Installing dependencies using ${chalk.blueBright(
+          this.useNpm ? "Npm" : "Yarn"
+        )}`
       ).start();
-      const { stdout } = await exec(`cd ${this.projectPath} && yarn`);
+      const { stdout } = await exec(
+        `cd ${this.projectPath} && ${this.useNpm ? "npm i" : "yarn"}`
+      );
       spinner.stop();
       stdout.split("\n").forEach((_) => print.task(_));
     } catch (error) {
