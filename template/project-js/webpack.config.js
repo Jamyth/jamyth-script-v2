@@ -6,7 +6,7 @@ module.exports = {
   entry: ["./node_modules/regenerator-runtime/runtime.js", "./src/index.jsx"],
   output: {
     path: path.resolve(__dirname, "build"),
-    filename: "[name].[hash].js",
+    filename: "static/js/[name].[hash].js",
   },
   resolve: {
     extensions: [".jsx", ".js"],
@@ -31,7 +31,7 @@ module.exports = {
         sideEffects: true,
       },
       {
-        test: /.(png|jpg|jepg|gif|svg|woff|swoff2)$/,
+        test: /.(png|jpg|jepg|gif|svg|woff|swoff2|ttf)$/,
         use: [
           {
             loader: "url-loader",
@@ -41,7 +41,7 @@ module.exports = {
               fallback: {
                 loader: "file-loader",
                 options: {
-                  name: "static/img/[name].[hash:8].[ext]",
+                  name: "static/asset/[name].[hash:8].[ext]",
                   esModule: false,
                 },
               },
