@@ -76,7 +76,7 @@ export class ModuleGenerator {
     while (loop < 5) {
       if (fs.existsSync(srcPath)) {
         print.process("src folder resolved");
-        if (!fs.existsSync(srcPath + "/tsconfig.json")) {
+        if (!fs.existsSync(path.join(srcPath, "..") + "/tsconfig.json")) {
           this.isJs = true;
         }
         return (this.src = srcPath);
