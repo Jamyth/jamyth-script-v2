@@ -140,6 +140,7 @@ export const Module = React.memo(() => {
 - ~~React.memo~~ -> v1.2.23
 - ~~Code Splitting~~ -> v1.3.0
 - ~~non-typescript~~ -> v2.2.5
+- ~~webpack 5~~ -> 2.3.0
 - and more ...
 
 ## Known issues
