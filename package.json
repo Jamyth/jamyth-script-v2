@@ -1,6 +1,6 @@
 {
   "name": "jamyth-script",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Cli for quickly setup react typescript webpack",
   "main": "index.js",
   "author": "Jamyth",
@@ -42,8 +42,5 @@
     "chalk": "^4.1.0",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   }
 }

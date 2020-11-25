@@ -1,16 +1,16 @@
 # jamyth-script (v2)
 
-A CLI tool for one-key setup [TypeScript](https://www.typescriptlang.org/), [React](https://reactjs.org/tutorial/tutorial.html), [Webpack](https://webpack.js.org/).
+A CLI tool for one-key setup [TypeScript](https://www.typescriptlang.org/), [React](https://reactjs.org/tutorial/tutorial.html), [Webpack](https://webpack.js.org/) Version 5.
 
 Feature Includes:
 
+- Gracefully Upgraded to webpack 5
 - Create a complete customizable [React](https://reactjs.org/tutorial/tutorial.html) Project with just a key.
 - Easy to switch between Npm and Yarn
 - Support Javascript and Typescript.
 - Support Scss
 - Save time configuring webpack settings.
 - Easy to change `webpack.config.js` when needed.
-- Currently freezed to webpack 4
 - Path Alias support
 - Easy Command to generate component and module
 
@@ -125,10 +125,11 @@ export const Module = React.memo(() => {
 | --js --javascript | create new project that uses javascript |
 
 ## Commands
-| Command | Description| Param Required |
-|--- |--- |--- |
-| new <project_name> <flags> | Generate a React Project | Yes |
-| g <module\|component> < name > | Create module or component | Yes |
+
+| Command                        | Description                | Param Required |
+| ------------------------------ | -------------------------- | -------------- |
+| new <project_name> <flags>     | Generate a React Project   | Yes            |
+| g <module\|component> < name > | Create module or component | Yes            |
 
 ## Todos
 
