@@ -1,11 +1,9 @@
-
 import React from "react";
 import ReactDOM from "react-dom";
-import { async } from 'util/async';
+import { async } from "util/async";
 
-const Main = async(() => import("module/main"), "Main");
+const MainComponent = async(() => import("module/main"), "Main");
 
-const ROOT = document.getElementById("_jamyth_");
+const ROOT = document.getElementById("_jamyth_page");
 
-ReactDOM.render(<Main />, ROOT);
-
+ReactDOM.render(<MainComponent />, ROOT);

@@ -1,8 +1,7 @@
-
-import React from 'react';
+import React from "react";
 import "./index.scss";
 
-export const App = React.memo(() => {
+export const Main = React.memo(({}) => {
   return (
     <div>
       <h1>Hello Jamyth!</h1>

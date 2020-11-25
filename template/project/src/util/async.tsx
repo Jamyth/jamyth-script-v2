@@ -10,9 +10,10 @@ export const async = <T, K extends ReactComponentTypeOf<T>>(
   loadingComponent: React.ReactElement | null = null
 ): T[K] => {
   return React.memo((props: any) => {
-    const [Component, setComponent] = React.useState<React.ComponentType<
-      any
-    > | null>(null);
+    const [
+      Component,
+      setComponent,
+    ] = React.useState<React.ComponentType<any> | null>(null);
 
     const load = async () => {
       try {

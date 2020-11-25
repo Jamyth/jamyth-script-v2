@@ -1,2 +1,1 @@
-
-export { App as Main } from './component/Main';
+export { Main as Main } from "./component/Main";
