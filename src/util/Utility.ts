@@ -45,7 +45,11 @@ export class Utility {
         postfix
       );
     } else {
-      return camelNameWithoutPostfix + postfix;
+      return (
+        camelNameWithoutPostfix.charAt(0).toLowerCase() +
+        camelNameWithoutPostfix.slice(1) +
+        postfix
+      );
     }
   }
 
