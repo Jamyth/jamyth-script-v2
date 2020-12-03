@@ -28,4 +28,5 @@ var ModuleType;
 (function (ModuleType) {
     ModuleType["module"] = "module";
     ModuleType["component"] = "component";
+    ModuleType["module-component"] = "module-component";
 })(ModuleType = exports.ModuleType || (exports.ModuleType = {}));

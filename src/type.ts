@@ -24,4 +24,5 @@ export enum OptionAlias {
 export enum ModuleType {
   module = "module",
   component = "component",
+  "module-component" = "module-component",
 }

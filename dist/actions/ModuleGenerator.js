@@ -68,9 +68,18 @@ class ModuleGenerator {
         }
         throw new Error(`Src folder is not detected, please cd to root directory and try again`);
     }
+    getDir(type) {
+        switch (type) {
+            case type_1.ModuleType.component:
+                return path_1.default.join(this.src, "component");
+            case type_1.ModuleType.module:
+            case type_1.ModuleType["module-component"]:
+                return path_1.default.join(this.src, "module");
+        }
+    }
     getModulePath() {
         print.info("Detecting module folder");
-        const dir = path_1.default.join(this.src, this.moduleType === type_1.ModuleType.module ? "module" : "component");
+        const dir = this.getDir(this.moduleType);
         if (!fs_extra_1.default.existsSync(dir) || !fs_extra_1.default.statSync(dir).isDirectory()) {
             throw new Error(`${Utility_1.Utility.getModuleNameInFormat(this.moduleType, "pascal")} is not a valid folder.`);
         }
@@ -88,50 +97,64 @@ class ModuleGenerator {
         }
         this.targetDirectory = path_1.default.join(this.moduleDirectory, directory);
     }
+    getTemplatePath(moduleType) {
+        let directory = "";
+        switch (moduleType) {
+            case type_1.ModuleType.component:
+            case type_1.ModuleType["module-component"]:
+                directory = "component";
+                break;
+            case type_1.ModuleType.module:
+                directory = "module";
+                break;
+        }
+        if (this.isJs) {
+            return `${directory}-js`;
+        }
+        return directory;
+    }
     copyTemplate() {
         print.task(`Generating ${this.moduleType} for ${this.moduleName}`);
-        fs_extra_1.default.copySync(path_1.default.join(this.templateDirectory, this.isJs
-            ? this.moduleType === type_1.ModuleType.component
-                ? "component-js"
-                : "module-js"
-            : this.moduleType === type_1.ModuleType.component
-                ? "component"
-                : "module"), this.targetDirectory);
+        fs_extra_1.default.copySync(path_1.default.join(this.templateDirectory, this.getTemplatePath(this.moduleType)), this.targetDirectory);
         if (this.state && !this.isJs) {
             fs_extra_1.default.copySync(path_1.default.join(this.templateDirectory, "state"), this.targetDirectory);
         }
     }
     updateTemplateContent() {
-        if (this.moduleType === type_1.ModuleType.module) {
-            const indexTSPath = this.targetDirectory + `/index.${this.isJs ? "js" : "ts"}`;
-            const mainTSXPath = this.targetDirectory + `/component/Main.${this.isJs ? "js" : "ts"}x`;
-            const indexSCSSPath = this.targetDirectory + `/component/index.scss`;
-            print.task([`Updating index.ts`, indexTSPath]);
-            Utility_1.Utility.replaceTemplate(indexTSPath, [
-                Utility_1.Utility.getModuleNameInFormat(this.moduleName, "pascal"),
-            ]);
-            print.task([`Updating Main.tsx`, mainTSXPath]);
-            Utility_1.Utility.replaceTemplate(mainTSXPath, [
-                Utility_1.Utility.getModuleNameInFormat(this.moduleName, "pascal"),
-                Utility_1.Utility.getModuleNameInFormat(this.moduleName, "camel"),
-            ]);
-            print.task([`Updating index.scss`, indexSCSSPath]);
-            Utility_1.Utility.replaceTemplate(indexSCSSPath, [
-                Utility_1.Utility.getModuleNameInFormat(this.moduleName, "camel"),
-            ]);
-        }
-        else if (this.moduleType === type_1.ModuleType.component) {
-            const indexTSXPath = this.targetDirectory + `/index.${this.isJs ? "js" : "ts"}x`;
-            const indexSCSSPath = this.targetDirectory + "/index.scss";
-            print.task([`Updating index.tsx`, indexTSXPath]);
-            Utility_1.Utility.replaceTemplate(indexTSXPath, [
-                Utility_1.Utility.getModuleNameInFormat(this.moduleName, "pascal"),
-                Utility_1.Utility.getModuleNameInFormat(this.moduleName, "camel"),
-            ]);
-            print.task([`Updating index.scss`, indexSCSSPath]);
-            Utility_1.Utility.replaceTemplate(indexSCSSPath, [
-                Utility_1.Utility.getModuleNameInFormat(this.moduleName, "camel"),
-            ]);
+        let indexSCSSPath = "";
+        switch (this.moduleType) {
+            case type_1.ModuleType.module:
+                const indexTSPath = this.targetDirectory + `/index.${this.isJs ? "js" : "ts"}`;
+                const mainTSXPath = this.targetDirectory + `/component/Main.${this.isJs ? "js" : "ts"}x`;
+                indexSCSSPath = this.targetDirectory + `/component/index.scss`;
+                print.task([`Updating index.ts`, indexTSPath]);
+                Utility_1.Utility.replaceTemplate(indexTSPath, [
+                    Utility_1.Utility.getModuleNameInFormat(this.moduleName, "pascal"),
+                ]);
+                print.task([`Updating Main.tsx`, mainTSXPath]);
+                Utility_1.Utility.replaceTemplate(mainTSXPath, [
+                    Utility_1.Utility.getModuleNameInFormat(this.moduleName, "pascal"),
+                    Utility_1.Utility.getModuleNameInFormat(this.moduleName, "camel"),
+                ]);
+                print.task([`Updating index.scss`, indexSCSSPath]);
+                Utility_1.Utility.replaceTemplate(indexSCSSPath, [
+                    Utility_1.Utility.getModuleNameInFormat(this.moduleName, "camel"),
+                ]);
+                break;
+            case type_1.ModuleType.component:
+            case type_1.ModuleType["module-component"]:
+                const indexTSXPath = this.targetDirectory + `/index.${this.isJs ? "js" : "ts"}x`;
+                indexSCSSPath = this.targetDirectory + "/index.scss";
+                print.task([`Updating index.tsx`, indexTSXPath]);
+                Utility_1.Utility.replaceTemplate(indexTSXPath, [
+                    Utility_1.Utility.getModuleNameInFormat(this.moduleName, "pascal"),
+                    Utility_1.Utility.getModuleNameInFormat(this.moduleName, "camel"),
+                ]);
+                print.task([`Updating index.scss`, indexSCSSPath]);
+                Utility_1.Utility.replaceTemplate(indexSCSSPath, [
+                    Utility_1.Utility.getModuleNameInFormat(this.moduleName, "camel"),
+                ]);
+                break;
         }
     }
 }
