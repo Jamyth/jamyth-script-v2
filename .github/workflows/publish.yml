@@ -1,0 +1,23 @@
+name: Jamyth-Script Release
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: "contains(toJSON(github.event.commits.*.message), '[RELEASE]')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+          registry-url: "https://registry.npmjs.org"
+      - name: Install all Dependencies
+        run: yarn
+      - name: Build the package
+        run: yarn build
+      - name: Publish new Version of jamyth-script to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
