@@ -126,10 +126,10 @@ export const Module = React.memo(() => {
 
 ## Commands
 
-| Command                        | Description                | Param Required |
-| ------------------------------ | -------------------------- | -------------- |
-| new <project_name> <flags>     | Generate a React Project   | Yes            |
-| g <module\|component> < name > | Create module or component | Yes            |
+| Command                                          | Description                | Param Required |
+| ------------------------------------------------ | -------------------------- | -------------- |
+| new <project_name> <flags>                       | Generate a React Project   | Yes            |
+| g <module\|component\|module-component> < name > | Create module or component | Yes            |
 
 ## Todos
 
