@@ -31,7 +31,12 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        use: ["babel-loader"],
+        use: {
+          loader: "babel-loader",
+          options: {
+            plugins: [require.resolve("react-refresh/babel")],
+          },
+        },
         exclude: "/node_modules/",
       },
       {

@@ -44,6 +44,16 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            plugins: [require.resolve("react-refresh/babel")],
+          },
+        },
+        exclude: "/node_modules/",
+      },
       { test: /\.tsx?$/, loader: "ts-loader", exclude: "/node_modules/" },
       {
         enforce: "pre",
