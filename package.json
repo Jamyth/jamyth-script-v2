@@ -1,6 +1,6 @@
 {
   "name": "jamyth-script",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "Cli for quickly setup react typescript webpack",
   "main": "index.js",
   "author": "Jamyth",
