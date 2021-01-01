@@ -112,7 +112,7 @@ export class ModuleGenerator {
       throw new Error(`src/util is not a valid folder.`);
     }
     print.process(`src/util folder resolved`);
-    this.statePath = dir + "type.ts";
+    this.statePath = dir + "/type.ts";
   }
 
   private getModulePath() {
