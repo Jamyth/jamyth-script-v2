@@ -6,7 +6,6 @@ import { ModuleGenerator } from "../actions/ModuleGenerator";
 interface Arguments {
   moduleType: ModuleType;
   moduleName: string;
-  state?: boolean;
   asset?: boolean;
 }
 
@@ -27,11 +26,10 @@ export class ModuleCommand extends AbstractCommand {
   }
 
   static run(args: yargs.Arguments<Arguments>) {
-    const { moduleName, moduleType, state, asset } = args;
+    const { moduleName, moduleType, asset } = args;
     new ModuleGenerator({
       moduleName,
       moduleType,
-      state,
       asset,
     }).run();
   }

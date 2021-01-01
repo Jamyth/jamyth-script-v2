@@ -11,25 +11,29 @@ interface ModuleGeneratorOption {
   asset?: boolean;
 }
 
+interface GenerateImportStatementForNewModuleStateConfig {
+  moduleStateName: string;
+  partialModulePath: string;
+}
+
 const print = Print.createConsoleLogger("Module Generator");
 
 export class ModuleGenerator {
   private src!: string;
   private moduleDirectory!: string;
   private targetDirectory!: string;
+  private statePath!: string;
   private isJs: boolean = false;
   private readonly templateDirectory: string;
   private readonly moduleName: string;
   private readonly moduleType: ModuleType;
-  private readonly state: boolean;
   private readonly asset: boolean;
   // private readonly prefix: string = "./test/1.2.3/";
 
-  constructor({ moduleName, moduleType, state, asset }: ModuleGeneratorOption) {
+  constructor({ moduleName, moduleType, asset }: ModuleGeneratorOption) {
     this.templateDirectory = path.join(__dirname, "..", "..", "template");
     this.moduleName = moduleName;
     this.moduleType = moduleType;
-    this.state = !!state;
     this.asset = !!asset;
   }
 
@@ -38,9 +42,11 @@ export class ModuleGenerator {
       this.preProcess();
       this.getSrcPath();
       this.getModulePath();
+      this.getStatePath();
       this.generateFolder();
       this.copyTemplate();
       this.updateTemplateContent();
+      this.updateStateContent();
     } catch (err) {
       print.error(err);
       process.exit(1);
@@ -99,6 +105,16 @@ export class ModuleGenerator {
     }
   }
 
+  private getStatePath() {
+    print.info("Detecting util/type.ts");
+    const dir = path.join(this.src, "util");
+    if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+      throw new Error(`src/util is not a valid folder.`);
+    }
+    print.process(`src/util folder resolved`);
+    this.statePath = dir + "type.ts";
+  }
+
   private getModulePath() {
     print.info("Detecting module folder");
     const dir = this.getDir(this.moduleType);
@@ -151,13 +167,6 @@ export class ModuleGenerator {
       path.join(this.templateDirectory, this.getTemplatePath(this.moduleType)),
       this.targetDirectory
     );
-
-    if (this.state && !this.isJs) {
-      fs.copySync(
-        path.join(this.templateDirectory, "state"),
-        this.targetDirectory
-      );
-    }
   }
 
   private updateTemplateContent() {
@@ -169,12 +178,20 @@ export class ModuleGenerator {
         const mainTSXPath =
           this.targetDirectory + `/component/Main.${this.isJs ? "js" : "ts"}x`;
         indexSCSSPath = this.targetDirectory + `/component/index.scss`;
+        const hookTSPath =
+          this.targetDirectory + `/hook.${this.isJs ? "js" : "ts"}`;
 
-        print.task([`Updating index.ts`, indexTSPath]);
+        print.task([`Updating index.${this.isJs ? "js" : "ts"}`, indexTSPath]);
         Utility.replaceTemplate(indexTSPath, [
           Utility.getModuleNameInFormat(this.moduleName, "pascal"),
+          Utility.getModuleNameInFormat(this.moduleName, "camel"),
         ]);
-        print.task([`Updating Main.tsx`, mainTSXPath]);
+        print.task([`Updating hook.${this.isJs ? "js" : "ts"}`, hookTSPath]);
+        Utility.replaceTemplate(hookTSPath, [
+          Utility.getModuleNameInFormat(this.moduleName, "pascal"),
+          Utility.getModuleNameInFormat(this.moduleName, "camel"),
+        ]);
+        print.task([`Updating Main.${this.isJs ? "js" : "ts"}x`, mainTSXPath]);
         Utility.replaceTemplate(mainTSXPath, [
           Utility.getModuleNameInFormat(this.moduleName, "pascal"),
           Utility.getModuleNameInFormat(this.moduleName, "camel"),
@@ -200,5 +217,41 @@ export class ModuleGenerator {
         ]);
         break;
     }
+  }
+
+  private updateStateContent() {
+    print.task(["Updating redux state definition", this.statePath]);
+
+    if (this.isJs) {
+      print.process(["Skipped due to JS Project detected"]);
+      return;
+    }
+
+    const stateFileContent = fs.readFileSync(this.statePath).toString();
+    const lastStateDeclarationIndex = stateFileContent.lastIndexOf("};");
+    if (lastStateDeclarationIndex === -1)
+      throw new Error("Cannot find state declaration");
+
+    const moduleName = Utility.getModuleNameInFormat(this.moduleName, "camel");
+    const moduleStateName =
+      Utility.getModuleNameInFormat(this.moduleName, "pascal") + "State";
+    const newStateFileContent =
+      this.generateImportStatementForNewModuleState({
+        moduleStateName,
+        partialModulePath: this.moduleName,
+      }) +
+      "\n" +
+      stateFileContent.substr(0, lastStateDeclarationIndex) +
+      `${moduleName}: ${moduleStateName};\n` +
+      stateFileContent.substr(lastStateDeclarationIndex);
+
+    fs.writeFileSync(this.statePath, newStateFileContent, { encoding: "utf8" });
+  }
+
+  private generateImportStatementForNewModuleState({
+    moduleStateName,
+    partialModulePath,
+  }: GenerateImportStatementForNewModuleStateConfig) {
+    return `import type {State as ${moduleStateName}} from "module/${partialModulePath}/type";`;
   }
 }
