@@ -1,10 +1,14 @@
-import { Main } from "./component/Main";
-import { registerModule } from "react-cloud-state";
+import { Main as MainComponent } from "./component/Main";
+import { register, Module } from "react-cloud-state";
 
 const initialState = {};
 
-const MainModule = registerModule("main", initialState, () => ({}));
+class MainModule extends Module {
+  onEnter() {
+    // todo
+  }
+}
 
-export const actions = MainModule.getActions();
-
-export { Main };
+const mainModule = register(new MainModule("main", initialState));
+export const actions = mainModule.getActions();
+export const Main = mainModule.attachLifecycle(MainComponent);

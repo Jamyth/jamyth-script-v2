@@ -37,6 +37,6 @@
   "dependencies": {
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-cloud-state": "^0.1.4"
+    "react-cloud-state": "^0.2.5"
   }
 }
